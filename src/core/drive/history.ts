@@ -15,7 +15,9 @@ export type RestorationDataMap = { [restorationIdentifier: string]: RestorationD
 export class History {
   readonly delegate: HistoryDelegate
   location!: Location
+  initialLocation?: Location
   restorationIdentifier = uuid()
+  initialRestorationIdentifier?: string
   restorationData: RestorationDataMap = {}
   started = false
   pageLoaded = false
@@ -31,8 +33,9 @@ export class History {
       history.scrollRestoration = "manual"
       addEventListener("popstate", this.onPopState, false)
       addEventListener("load", this.onPageLoad, false)
+      this.initialLocation = Location.currentLocation
+      this.initialRestorationIdentifier = this.restorationIdentifier
       this.started = true
-      this.replace(Location.currentLocation)
     }
   }
 
@@ -41,6 +44,8 @@ export class History {
       history.scrollRestoration = this.previousScrollRestoration ?? "auto"
       removeEventListener("popstate", this.onPopState, false)
       removeEventListener("load", this.onPageLoad, false)
+      delete this.initialLocation
+      delete this.initialRestorationIdentifier
       this.started = false
     }
   }
@@ -76,14 +81,10 @@ export class History {
 
   onPopState = (event: PopStateEvent) => {
     if (this.shouldHandlePopState()) {
-      const { turbo } = event.state || {}
-      if (turbo) {
-        const location = Location.currentLocation
-        this.location = location
-        const { restorationIdentifier } = turbo
-        this.restorationIdentifier = restorationIdentifier
-        this.delegate.historyPoppedToLocationWithRestorationIdentifier(location, restorationIdentifier)
-      }
+      const restorationIdentifier = this.restorationIdentifierForPopState(event)
+      if (!restorationIdentifier) return
+      this.restorationIdentifier = restorationIdentifier
+      this.delegate.historyPoppedToLocationWithRestorationIdentifier(Location.currentLocation, restorationIdentifier)
     }
   }
 
@@ -101,5 +102,19 @@ export class History {
 
   pageIsLoaded() {
     return this.pageLoaded || document.readyState == "complete"
+  }
+
+  restorationIdentifierForPopState(event: PopStateEvent) {
+    if (event.state) {
+      return (event.state.turbo || {}).restorationIdentifier
+    }
+
+    if (this.poppedToInitialEntry(event)) {
+      return this.initialRestorationIdentifier
+    }
+  }
+
+  poppedToInitialEntry(event: PopStateEvent) {
+    return !event.state && Location.currentLocation.isEqualTo(this.initialLocation)
   }
 }
