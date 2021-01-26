@@ -11,8 +11,10 @@ export class NavigationTests extends TurboDriveTestCase {
   }
 
   async "test following a same-origin unannotated link"() {
+    this.listenForVisits()
     this.clickSelector("#same-origin-unannotated-link")
     await this.nextBody
+    this.assert.ok(this.turboVisited)
     this.assert.equal(await this.pathname, "/src/tests/fixtures/one.html")
     this.assert.equal(await this.visitAction, "advance")
   }
@@ -25,27 +27,34 @@ export class NavigationTests extends TurboDriveTestCase {
   }
 
   async "test following a same-origin data-turbo=false link"() {
+    this.listenForVisits()
     this.clickSelector("#same-origin-false-link")
     await this.nextBody
+    this.assert.notOk(this.turboVisited)
     this.assert.equal(await this.pathname, "/src/tests/fixtures/one.html")
     this.assert.equal(await this.visitAction, "load")
   }
 
   async "test following a same-origin unannotated link inside a data-turbo=false container"() {
+    this.listenForVisits()
     this.clickSelector("#same-origin-unannotated-link-inside-false-container")
     await this.nextBody
+    this.assert.notOk(this.turboVisited)
     this.assert.equal(await this.pathname, "/src/tests/fixtures/one.html")
     this.assert.equal(await this.visitAction, "load")
   }
 
   async "test following a same-origin data-turbo=true link inside a data-turbo=false container"() {
+    this.listenForVisits()
     this.clickSelector("#same-origin-true-link-inside-false-container")
     await this.nextBody
+    this.assert.notOk(this.turboVisited)
     this.assert.equal(await this.pathname, "/src/tests/fixtures/one.html")
     this.assert.equal(await this.visitAction, "advance")
   }
 
   async "test following a same-origin anchored link"() {
+    this.listenForVisits()
     this.clickSelector("#same-origin-anchored-link")
     await this.nextBody
     this.assert.equal(await this.pathname, "/src/tests/fixtures/one.html")
@@ -118,8 +127,10 @@ export class NavigationTests extends TurboDriveTestCase {
   }
 
   async "test skip link with hash-only path"() {
+    this.listenForVisits()
     await this.clickSelector('a[href="#main"]')
 
+    this.assert.notOk(this.turboVisited)
     this.assert.equal(await this.pathname, "/src/tests/fixtures/navigation.html")
     this.assert.equal(await this.hash, "#main")
     this.assert.ok(await this.isScrolledToSelector("#main"))
@@ -130,6 +141,16 @@ export class NavigationTests extends TurboDriveTestCase {
     const firstLinkWithinMain = await this.querySelector("#main a:first-of-type")
     this.assert.notOk(await activeElement.equals(skippedLink), "skips interactive elements before #main")
     this.assert.ok(await activeElement.equals(firstLinkWithinMain), "skips to first interactive element after #main")
+  }
+
+  listenForVisits() {
+    this.remote.execute(() => addEventListener("turbo:visit", function eventListener(event) {
+      document.head.insertAdjacentHTML("beforeend", `<meta name="turbo-visited">`)
+    }, { once: true }))
+  }
+
+  get turboVisited(): Promise<boolean> {
+    return this.hasSelector("meta[name=turbo-visited]")
   }
 }
 
