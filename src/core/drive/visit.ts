@@ -264,7 +264,7 @@ export class Visit implements FetchRequestDelegate {
 
   goToSamePageAnchor() {
     if (this.isSamePage) {
-      this.render(() => {
+      this.render(async () => {
         this.cacheSnapshot()
         this.performScroll()
         this.adapter.visitRendered(this)
