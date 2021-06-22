@@ -8,15 +8,30 @@ export class FrameRenderer extends Renderer<FrameElement> {
   }
 
   async render() {
-    await nextAnimationFrame()
-    this.preservingPermanentElements(() => {
-      this.loadFrameElement()
+    return new Promise<void>(resolve => {
+      resolve()
     })
-    this.scrollFrameIntoView()
-    await nextAnimationFrame()
-    this.focusFirstAutofocusableElement()
-    await nextAnimationFrame()
-    this.activateScriptElements()
+      .then(() => {
+        nextAnimationFrame()
+      })
+      .then(() => {
+        this.preservingPermanentElements(() => {
+          this.loadFrameElement()
+        })
+        this.scrollFrameIntoView()
+      })
+      .then(() => {
+        nextAnimationFrame()
+      })
+      .then(() => {
+        this.focusFirstAutofocusableElement()
+      })
+      .then(() => {
+        nextAnimationFrame()
+      })
+      .then(() => {
+        this.activateScriptElements()
+      })
   }
 
   loadFrameElement() {
@@ -54,7 +69,7 @@ export class FrameRenderer extends Renderer<FrameElement> {
 
   get newScriptElements() {
     return this.currentElement.querySelectorAll("script")
-  }  
+  }
 }
 
 function readScrollLogicalPosition(value: string | null, defaultValue: ScrollLogicalPosition): ScrollLogicalPosition {
