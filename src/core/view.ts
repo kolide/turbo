@@ -1,9 +1,10 @@
 import { Renderer } from "./renderer"
 import { Snapshot } from "./snapshot"
 import { Position } from "./types"
+import { Interception, Intercept } from "./interception"
 
 export interface ViewDelegate<S extends Snapshot> {
-  applicationAllowsImmediateRendering(snapshot: S, resume: () => void): boolean
+  viewWillRenderSnapshot(snapshot: S, isPreview: boolean, intercept: Intercept): void
   viewRenderedSnapshot(snapshot: S, isPreview: boolean): void
   viewInvalidated(): void
 }
@@ -51,27 +52,22 @@ export abstract class View<E extends Element, S extends Snapshot<E> = Snapshot<E
 
     const { isPreview, shouldRender, newSnapshot: snapshot } = renderer
     if (shouldRender) {
-      this.renderer = renderer
-      this.prepareToRenderSnapshot(renderer)
+      try {
+        this.renderer = renderer
+        this.prepareToRenderSnapshot(renderer)
 
-      return new Promise<void>(resolve => {
-        if (this.delegate.applicationAllowsImmediateRendering(snapshot, resolve)) {
-          resolve()
-        }
-      })
-        .then(() => {
-          this.renderSnapshot(renderer)
-        })
-        .then(() => {
-          this.delegate.viewRenderedSnapshot(snapshot, isPreview)
-          this.finishRenderingSnapshot(renderer)
-        })
-        .finally(() => {
-          delete this.renderer
-        })
+        const interception = new Interception()
+        this.delegate.viewWillRenderSnapshot(snapshot, isPreview, interception.intercept)
+        if (interception.started) await interception.completed
+
+        await this.renderSnapshot(renderer)
+        this.delegate.viewRenderedSnapshot(snapshot, isPreview)
+        this.finishRenderingSnapshot(renderer)
+      } finally {
+        delete this.renderer
+      }
     } else {
       this.invalidate()
-      return Promise.resolve()
     }
   }
 
