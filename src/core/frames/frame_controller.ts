@@ -12,6 +12,7 @@ import { FrameView } from "./frame_view"
 import { LinkInterceptor, LinkInterceptorDelegate } from "./link_interceptor"
 import { FrameRenderer } from "./frame_renderer"
 import { elementIsNavigable } from "../session"
+import { Interception } from "../interception"
 
 export class FrameController implements AppearanceObserverDelegate, FetchRequestDelegate, FormInterceptorDelegate, FormSubmissionDelegate, FrameElementDelegate, LinkInterceptorDelegate, ViewDelegate<Snapshot<FrameElement>> {
   readonly element: FrameElement
@@ -210,8 +211,8 @@ export class FrameController implements AppearanceObserverDelegate, FetchRequest
 
   // View delegate
 
-  applicationAllowsImmediateRendering(snapshot: Snapshot, resume: () => void) {
-    return true
+  viewWillRenderSnapshot(snapshot: Snapshot, isPreview: boolean, interception: Interception) {
+
   }
 
   viewRenderedSnapshot(snapshot: Snapshot, isPreview: boolean) {

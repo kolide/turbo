@@ -16,6 +16,7 @@ import { dispatch } from "../util"
 import { PageView, PageViewDelegate } from "./drive/page_view"
 import { Visit, VisitOptions } from "./drive/visit"
 import { PageSnapshot } from "./drive/page_snapshot"
+import { Interception } from "./interception"
 
 export type TimingData = {}
 
@@ -193,6 +194,10 @@ export class Session implements FormSubmitObserverDelegate, HistoryDelegate, Lin
     this.notifyApplicationBeforeCachingSnapshot()
   }
 
+  viewWillRenderSnapshot({ element }: PageSnapshot, isPreview: boolean, interception: Interception) {
+    this.notifyApplicationBeforeRender(element, interception)
+  }
+
   viewRenderedSnapshot(snapshot: PageSnapshot, isPreview: boolean) {
     this.view.lastRenderedLocation = this.history.location
     this.notifyApplicationAfterRender()
@@ -214,11 +219,6 @@ export class Session implements FormSubmitObserverDelegate, HistoryDelegate, Lin
     return !event.defaultPrevented
   }
 
-  applicationAllowsImmediateRendering({ element }: PageSnapshot, resume: () => void) {
-    const event = this.notifyApplicationBeforeRender(element, resume)
-    return !event.defaultPrevented
-  }
-
   notifyApplicationAfterClickingLinkToLocation(link: Element, location: URL) {
     return dispatch("turbo:click", { target: link, detail: { url: location.href }, cancelable: true })
   }
@@ -235,8 +235,8 @@ export class Session implements FormSubmitObserverDelegate, HistoryDelegate, Lin
     return dispatch("turbo:before-cache")
   }
 
-  notifyApplicationBeforeRender(newBody: HTMLBodyElement, resume: () => void) {
-    return dispatch("turbo:before-render", { detail: { newBody, resume }, cancelable: true })
+  notifyApplicationBeforeRender(newBody: HTMLBodyElement, interception: Interception) {
+    return dispatch("turbo:before-render", { detail: { newBody, interception } })
   }
 
   notifyApplicationAfterRender() {

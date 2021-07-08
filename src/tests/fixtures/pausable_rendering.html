@@ -7,9 +7,9 @@
     <script src="/src/tests/fixtures/test.js"></script>
     <script type="module">
       addEventListener('turbo:before-render', function(event) {
-        event.preventDefault()
+        event.detail.interception.start()
         if (confirm('Continue rendering?')) {
-          event.detail.resume()
+          event.detail.interception.complete()
         } else {
           alert('Rendering aborted')
         }
