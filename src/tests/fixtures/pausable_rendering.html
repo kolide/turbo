@@ -7,12 +7,14 @@
     <script src="/src/tests/fixtures/test.js"></script>
     <script type="module">
       addEventListener('turbo:before-render', function(event) {
-        event.detail.intercept(function (complete) {
-          if (confirm('Continue rendering?')) {
-            complete()
-          } else {
-            alert('Rendering aborted')
-          }
+        event.detail.intercept(function () {
+          return new Promise(function (resolve) {
+            if (confirm('Continue rendering?')) {
+              resolve()
+            } else {
+              alert('Rendering aborted')
+            }
+          })
         })
       })
     </script>

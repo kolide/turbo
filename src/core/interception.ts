@@ -1,4 +1,4 @@
-export type Intercept = (callback: (value: any) => void) => void
+export type Intercept = (callback: () => Promise<any>) => void
 
 export class Interception {
   started = false
@@ -8,9 +8,10 @@ export class Interception {
 
   constructor () {
     this.completed = new Promise((resolve) => this.resolve = resolve)
-    this.intercept = (callback) => {
+    this.intercept = async (callback) => {
       this.start()
-      callback(this.complete.bind(this))
+      const value = await callback()
+      this.complete(value)
     }
   }
 
