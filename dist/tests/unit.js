@@ -1427,6 +1427,7 @@ var tests_unit = (function (exports, intern) {
                 this.render(async () => {
                     this.cacheSnapshot();
                     this.adapter.visitRendered(this);
+                    window.dispatchEvent(new HashChangeEvent("hashchange"));
                 });
             }
         }

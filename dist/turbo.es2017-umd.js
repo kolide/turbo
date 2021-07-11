@@ -1430,6 +1430,7 @@ Copyright © 2021 Basecamp, LLC
                 this.render(async () => {
                     this.cacheSnapshot();
                     this.adapter.visitRendered(this);
+                    window.dispatchEvent(new HashChangeEvent("hashchange"));
                 });
             }
         }

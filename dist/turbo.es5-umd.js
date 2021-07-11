@@ -1989,6 +1989,7 @@ Copyright © 2021 Basecamp, LLC
                     return __generator(this, function (_a) {
                         this.cacheSnapshot();
                         this.adapter.visitRendered(this);
+                        window.dispatchEvent(new HashChangeEvent("hashchange"));
                         return [2];
                     });
                 }); });

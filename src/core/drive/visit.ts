@@ -266,6 +266,7 @@ export class Visit implements FetchRequestDelegate {
       this.render(async () => {
         this.cacheSnapshot()
         this.adapter.visitRendered(this)
+        window.dispatchEvent(new HashChangeEvent("hashchange"))
       })
     }
   }
