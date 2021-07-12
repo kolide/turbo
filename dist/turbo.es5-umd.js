@@ -2580,6 +2580,7 @@ Copyright © 2021 Basecamp, LLC
                             return [4, this.view.renderPage(snapshot)];
                         case 2:
                             _a.sent();
+                            window.scroll(0, 0);
                             this.view.clearSnapshotCache();
                             _a.label = 3;
                         case 3: return [2];
