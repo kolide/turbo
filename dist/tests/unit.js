@@ -581,6 +581,7 @@ var tests_unit = (function (exports, intern) {
             }
         }
         requestFailedWithResponse(request, response) {
+            dispatch("turbo:submit-failed", { target: this.formElement, detail: Object.assign({ formSubmission: this }, this.result) });
             this.result = { success: false, fetchResponse: response };
             this.delegate.formSubmissionFailedWithResponse(this, response);
         }

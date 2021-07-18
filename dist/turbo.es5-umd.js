@@ -924,6 +924,7 @@ Copyright © 2021 Basecamp, LLC
             }
         };
         FormSubmission.prototype.requestFailedWithResponse = function (request, response) {
+            dispatch("turbo:submit-failed", { target: this.formElement, detail: __assign({ formSubmission: this }, this.result) });
             this.result = { success: false, fetchResponse: response };
             this.delegate.formSubmissionFailedWithResponse(this, response);
         };

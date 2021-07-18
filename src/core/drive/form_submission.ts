@@ -149,6 +149,7 @@ export class FormSubmission {
   }
 
   requestFailedWithResponse(request: FetchRequest, response: FetchResponse) {
+    dispatch("turbo:submit-failed", { target: this.formElement, detail: { formSubmission: this, ...this.result } })
     this.result = { success: false, fetchResponse: response }
     this.delegate.formSubmissionFailedWithResponse(this, response)
   }
