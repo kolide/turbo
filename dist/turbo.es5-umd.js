@@ -910,6 +910,7 @@ Copyright © 2021 Basecamp, LLC
         };
         FormSubmission.prototype.requestSucceededWithResponse = function (request, response) {
             if (response.clientError || response.serverError) {
+                dispatch("turbo:submit-failed", { target: this.formElement, detail: __assign({ formSubmission: this }, this.result) });
                 this.delegate.formSubmissionFailedWithResponse(this, response);
             }
             else if (this.requestMustRedirect(request) && responseSucceededWithoutRedirect(response)) {

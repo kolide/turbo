@@ -136,6 +136,7 @@ export class FormSubmission {
 
   requestSucceededWithResponse(request: FetchRequest, response: FetchResponse) {
     if (response.clientError || response.serverError) {
+      dispatch("turbo:submit-failed", { target: this.formElement, detail: { formSubmission: this, ...this.result } })
       this.delegate.formSubmissionFailedWithResponse(this, response)
     } else if (this.requestMustRedirect(request) && responseSucceededWithoutRedirect(response)) {
       const error = new Error("Form responses must redirect to another location")
