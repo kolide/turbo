@@ -1940,6 +1940,7 @@ class Navigator {
         if (responseHTML) {
             const snapshot = PageSnapshot.fromHTMLString(responseHTML);
             await this.view.renderPage(snapshot);
+            window.scroll(0, 0);
             this.view.clearSnapshotCache();
         }
     }
