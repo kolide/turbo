@@ -75,6 +75,7 @@ export class Navigator {
 
   formSubmissionStarted(formSubmission: FormSubmission) {
     // Not all adapaters implement formSubmissionStarted
+    console.log(typeof this.adapter.formSubmissionStarted)
     if (typeof this.adapter.formSubmissionStarted === 'function') {
       this.adapter.formSubmissionStarted(formSubmission)
     }
@@ -111,6 +112,7 @@ export class Navigator {
 
   formSubmissionFinished(formSubmission: FormSubmission) {
     // Not all adapaters implement formSubmissionFinished
+    console.log(typeof this.adapter.formSubmissionFinished)
     if (typeof this.adapter.formSubmissionFinished === 'function') {
       this.adapter.formSubmissionFinished(formSubmission)
     }
