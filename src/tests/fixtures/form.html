@@ -29,7 +29,7 @@
         <input type="submit" style="">
       </form>
       <form action="/__turbo/redirect" method="post" class="no-enctype">
-        <input type="submit">
+        <input type="submit" value="one post">
       </form>
       <form action="/__turbo/redirect" method="post" enctype="multipart/form-data">
         <input type="hidden" name="path" value="/src/tests/fixtures/form.html">
@@ -86,7 +86,7 @@
     <div id="reject">
       <form class="unprocessable_entity" action="/__turbo/reject" method="post" style="margin-top:100vh">
         <input type="hidden" name="status" value="422">
-        <input type="submit">
+        <input type="submit" value="reject1">
       </form>
       <form class="unprocessable_entity_with_tall_form" action="/__turbo/reject/tall" method="post">
         <input type="hidden" name="status" value="422">

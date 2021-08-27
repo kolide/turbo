@@ -159,8 +159,12 @@ export class FormSubmission {
   }
 
   requestFinished(request: FetchRequest) {
+    console.log("in requestFinished")
     this.state = FormSubmissionState.stopped
+    console.log("in requestFinished state=stoppped")
     dispatch("turbo:submit-end", { target: this.formElement, detail: { formSubmission: this, ...this.result }})
+    console.log("in requestFinished dispatched turbo:submit-end")
+
     this.delegate.formSubmissionFinished(this)
   }
 

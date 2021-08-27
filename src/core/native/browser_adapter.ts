@@ -27,10 +27,14 @@ export class BrowserAdapter implements Adapter {
   }
 
   visitRequestStarted(visit: Visit) {
+    console.log("in visitRequestStarted")
     this.progressBar.setValue(0)
+    console.log("in visitRequestStarted this.progressBar.setValue(0)")
     if (visit.hasCachedSnapshot() || visit.action != "restore") {
+      console.log("in visitRequestStarted this.showProgressBarAfterDelay()")
       this.showProgressBarAfterDelay()
     } else {
+      console.log("in visitRequestStarted this.showProgressBar()")
       this.showProgressBar()
     }
   }
@@ -72,28 +76,46 @@ export class BrowserAdapter implements Adapter {
   }
 
   formSubmissionStarted(formSubmission: FormSubmission) {
+    console.log("in formSubmissionStarted")
     this.progressBar.setValue(0)
+    console.log("in formSubmissionStarted this.progressBar.setValue(0)")
     this.showProgressBarAfterDelay()
+    console.log("in formSubmissionStarted this.showProgressBarAfterDelay()")
   }
 
   formSubmissionFinished(formSubmission: FormSubmission) {
+    console.log("in formSubmissionFinished")
     this.progressBar.setValue(1)
+    console.log("in formSubmissionFinished - this.progressBar.setValue(1)")
     this.hideProgressBar()
+    console.log("in formSubmissionFinished - this.hideProgressBar()")
+
+    // setTimeout(()=>{
+    //   this.progressBar.setValue(1)
+    //   this.hideProgressBar()
+    //   console.log("in formSubmissionFinished - this.hideProgressBar() setTimeout 1000")
+    // }, 1000)
   }
 
   // Private
 
   showProgressBarAfterDelay() {
-    this.progressBarTimeout = window.setTimeout(this.showProgressBar, this.session.progressBarDelay)
+    console.log("in showProgressBarAfterDelay")
+    if (this.progressBarTimeout != null) {
+      console.log("in showProgressBarAfterDelay setting timeout", this.session.progressBarDelay)
+      this.progressBarTimeout = window.setTimeout(this.showProgressBar, this.session.progressBarDelay)
+    }
   }
 
   showProgressBar = () => {
+    console.log("in showProgressBar")
     this.progressBar.show()
   }
 
   hideProgressBar() {
     this.progressBar.hide()
     if (this.progressBarTimeout != null) {
+      console.log("we have a timeout")
       window.clearTimeout(this.progressBarTimeout)
       delete this.progressBarTimeout
     }

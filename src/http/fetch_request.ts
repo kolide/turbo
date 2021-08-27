@@ -92,6 +92,7 @@ export class FetchRequest {
         throw error
       }
     } finally {
+      console.log("test", this, this.delegate)
       this.delegate.requestFinished(this)
     }
   }
